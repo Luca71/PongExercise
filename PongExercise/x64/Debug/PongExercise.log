@@ -1,4 +1,3 @@
 ﻿  Game.cpp
-D:\CORSO AIV 2021-2022\C++ Project\PongExercise\PongExercise\Game.cpp(95,30): warning C4244: '=': conversion from 'Sint32' to 'float', possible loss of data
-D:\CORSO AIV 2021-2022\C++ Project\PongExercise\PongExercise\Game.cpp(96,30): warning C4244: '=': conversion from 'Sint32' to 'float', possible loss of data
+D:\CORSO AIV 2021-2022\C++ Project\PongExercise\PongExercise\Game.cpp(162,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   PongExercise.vcxproj -> D:\CORSO AIV 2021-2022\C++ Project\PongExercise\x64\Debug\PongExercise.exe

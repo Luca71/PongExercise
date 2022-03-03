@@ -29,6 +29,7 @@ private:
 	void ProcessInput();
 	void UpdateGame();
 	void GenerateOutput();
+	void UpdateBallVelocity();
 
 	// Window created by SDL
 	SDL_Window* Window;

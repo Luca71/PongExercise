@@ -15,17 +15,20 @@ const int WallThikness = 15;
 const int PaddleWidth = 15;
 const float PaddleHeight = 100.0f;
 const float PaddleSpeed = 300.0f;
-const float PaddleStartPosX = 35;
+const float PaddleStartPosX = 40;
 
 // Ball size and speed
 const int BallWidth = 15;
 const int BallHeight = 15;
-const float BallSpeed = 220;
+float BallSpeed = 200.0f;
+int LoopCount = 0;
 
 // Mouse pos
-Vector2_t MousePos;
+int MousePosY;
 
-Game::Game() : Window(nullptr), Renderer(nullptr), TicksCount(0), IsRunning(true), PaddleDir(0)
+Game::Game() :	Window(nullptr), Renderer(nullptr), TicksCount(0), IsRunning(true), PaddleDir(0), 
+				PaddlePos(Vector2_t{ PaddleStartPosX , 0}), BallPos(Vector2_t{ WinWidth * 0.5f , WinHeight * 0.5f }),
+				BallVel(Vector2_t{-1 , 1})
 {
 }
 
@@ -55,18 +58,6 @@ bool Game::Initialize()
 		return false;
 	}
 
-	// Init paddle start position
-	PaddlePos.x = PaddleStartPosX;
-	PaddlePos.y = WinHeight * 0.5f;
-	
-	// Init ball start position
-	BallPos.x = WinWidth * 0.5f;
-	BallPos.y = WinHeight * 0.5f;
-
-	// init ball velocity
-	BallVel.x = -BallSpeed;
-	BallVel.y = BallSpeed;
-
 	return true;
 }
 
@@ -75,6 +66,7 @@ void Game::RunLoop()
 	while (IsRunning)
 	{
 		ProcessInput();
+		UpdateBallVelocity();
 		UpdateGame();
 		GenerateOutput();
 	}
@@ -92,11 +84,14 @@ void Game::ProcessInput()
 				break;
 			
 			case SDL_MOUSEMOTION:
-				MousePos.x = event.motion.x;
-				MousePos.y = event.motion.y;
+				//MousePos.x = event.motion.x;
+				MousePosY = event.motion.y;
 				break;
 		}
 	}
+
+	// Hide mouse cursor
+	SDL_ShowCursor(SDL_DISABLE);
 
 	// Get state of keyboard
 	const Uint8* state = SDL_GetKeyboardState(NULL);
@@ -117,6 +112,17 @@ void Game::ProcessInput()
 	{
 		PaddleDir += 1;
 	}
+}
+
+void Game::UpdateBallVelocity()
+{
+	if (LoopCount > 60)
+	{
+		BallSpeed += 2.0f;
+		LoopCount = 1;
+		return;
+	}
+	LoopCount++;
 }
 
 void Game::UpdateGame()
@@ -153,7 +159,7 @@ void Game::UpdateGame()
 	*/
 
 	// Paddle position controlled by mouse
-	PaddlePos.y = MousePos.y;
+	PaddlePos.y = MousePosY;
 	if (PaddlePos.y < (PaddleHeight * 0.5f + PaddleWidth))
 	{
 		PaddlePos.y = PaddleHeight * 0.5f + PaddleWidth;
@@ -164,8 +170,8 @@ void Game::UpdateGame()
 	}
 
 	// Update ball position based on ball velocity
-	BallPos.x += BallVel.x * deltaTime;
-	BallPos.y += BallVel.y * deltaTime;
+	BallPos.x += BallVel.x * BallSpeed * deltaTime;
+	BallPos.y += BallVel.y * BallSpeed * deltaTime;
 
 	// Paddle collision
 	float diff = PaddlePos.y - BallPos.y;
