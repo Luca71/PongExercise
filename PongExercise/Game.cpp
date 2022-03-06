@@ -2,7 +2,8 @@
 
 #define WIN_BACKGROUND_COLOR 0, 46, 120, 255
 #define WALL_COLOR 0, 11, 28, 250
-#define PADDLE_COLOR 250, 250, 250, 250
+#define PADDLE_COLOR 250, 250, 250, 255
+#define FONT_COLOR 250, 250, 250, 255
 
 // Window size
 const int WinWidth = 1024;
@@ -26,9 +27,9 @@ int LoopCount = 0;
 // Mouse pos
 int MousePosY;
 
-Game::Game() :	Window(nullptr), Renderer(nullptr), TicksCount(0), IsRunning(true), PaddleDir(0), 
-				PaddlePos(Vector2_t{ PaddleStartPosX , 0}), BallPos(Vector2_t{ WinWidth * 0.5f , WinHeight * 0.5f }),
-				BallVel(Vector2_t{-1 , 1})
+Game::Game() :	Window(nullptr), Renderer(nullptr),
+				TicksCount(0), IsRunning(true), PaddleDir(0), PaddlePos(Vector2_t{ PaddleStartPosX , 0}), 
+				BallPos(Vector2_t{ WinWidth * 0.5f , WinHeight * 0.5f }), BallVel(Vector2_t{1 , 1})
 {
 }
 
@@ -66,7 +67,6 @@ void Game::RunLoop()
 	while (IsRunning)
 	{
 		ProcessInput();
-		UpdateBallVelocity();
 		UpdateGame();
 		GenerateOutput();
 	}
@@ -118,7 +118,7 @@ void Game::UpdateBallVelocity()
 {
 	if (LoopCount > 60)
 	{
-		BallSpeed += 2.0f;
+		BallSpeed += 10.0f;
 		LoopCount = 1;
 		return;
 	}
@@ -210,6 +210,8 @@ void Game::UpdateGame()
 	{
 		BallVel.y *= -1;
 	}
+
+	UpdateBallVelocity();
 }
 
 void Game::GenerateOutput()
@@ -220,17 +222,14 @@ void Game::GenerateOutput()
 	// Clear back buffer
 	SDL_RenderClear(Renderer);
 
-	// Draw walls
+	/* Draw walls */
 	SDL_SetRenderDrawColor(Renderer, WALL_COLOR);
-
 	// Draw top wall
 	SDL_Rect wall{0, 0, WinWidth, WallThikness};
 	SDL_RenderFillRect(Renderer, &wall);
-
 	// Draw bottom wall
 	wall.y = WinHeight - WallThikness;
 	SDL_RenderFillRect(Renderer, &wall);
-
 	// Draw right wall
 	wall.x = WinWidth - WallThikness;
 	wall.y = 0;
@@ -256,6 +255,9 @@ void Game::GenerateOutput()
 		BallHeight
 	};
 	SDL_RenderFillRect(Renderer, &ball);
+
+	// Draw Score
+
 
 	// Swap front buffer and back buffer
 	SDL_RenderPresent(Renderer);
