@@ -27,6 +27,15 @@ int LoopCount = 0;
 // Mouse pos
 int MousePosY;
 
+// Font Score
+int Score = 0;
+TTF_Font* Orbitron = TTF_OpenFont("Assets/Orbitron-Regular.ttf", 40);
+SDL_Color FontColor = { FONT_COLOR };
+SDL_Surface* ScoreSurface;
+SDL_Texture* ScoreTexture;
+SDL_Rect ScoreRect = { 500, 100, 200, 20 };
+
+
 Game::Game() :	Window(nullptr), Renderer(nullptr),
 				TicksCount(0), IsRunning(true), PaddleDir(0), PaddlePos(Vector2_t{ PaddleStartPosX , 0}), 
 				BallPos(Vector2_t{ WinWidth * 0.5f , WinHeight * 0.5f }), BallVel(Vector2_t{1 , 1})
@@ -120,6 +129,9 @@ void Game::UpdateBallVelocity()
 	{
 		BallSpeed += 10.0f;
 		LoopCount = 1;
+
+		Score += 10;
+
 		return;
 	}
 	LoopCount++;
@@ -257,7 +269,19 @@ void Game::GenerateOutput()
 	SDL_RenderFillRect(Renderer, &ball);
 
 	// Draw Score
-
+	ScoreSurface = TTF_RenderText_Solid(Orbitron, "Test per lo score", FontColor);
+	if(ScoreSurface == NULL)
+	{
+		SDL_Log("Failed to create surface: %s", SDL_GetError());
+	}
+	ScoreTexture = SDL_CreateTextureFromSurface(Renderer, ScoreSurface);
+	if (ScoreTexture == NULL)
+	{
+		SDL_Log("Failed to create texture: %s", SDL_GetError());
+	}
+	SDL_RenderCopy(Renderer, ScoreTexture, NULL, &ScoreRect);
+	SDL_DestroyTexture(ScoreTexture);
+	SDL_FreeSurface(ScoreSurface);
 
 	// Swap front buffer and back buffer
 	SDL_RenderPresent(Renderer);
