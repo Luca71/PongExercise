@@ -2,6 +2,8 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "Utils.h"
+#include <iostream>
+#include <fstream>
 
 class Game
 {
@@ -31,6 +33,8 @@ private:
 	void UpdateGame();
 	void GenerateOutput();
 	void UpdateBallVelocity();
+	void SaveHighScore();
+	void LoadHighScore();
 
 	// Window created by SDL
 	SDL_Window* Window;

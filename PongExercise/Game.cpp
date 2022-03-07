@@ -36,7 +36,12 @@ TTF_Font* Orbitron;
 SDL_Color FontColor = { FONT_COLOR };
 SDL_Surface* ScoreSurface;
 SDL_Texture* ScoreTexture;
-SDL_Rect ScoreRect = {(WinWidth - 290), 20, 250, 50 };
+SDL_Rect ScoreRect = { (WinWidth - 290), 20, 250, 50 };
+SDL_Rect HighScoreRect = {(WinWidth - 290), 70, 150, 20 };
+
+// Save Score
+string ScoreCompositText;
+string HighScore;
 
 
 Game::Game() :	Window(nullptr), Renderer(nullptr),
@@ -60,7 +65,6 @@ bool Game::Initialize()
 		return false;
 	}
 
-
 	// Create game window
 	Window = SDL_CreateWindow("One Player Pong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WinWidth, WinHeight, 0);
 	if (!Window)
@@ -76,6 +80,8 @@ bool Game::Initialize()
 		SDL_Log("Failed to create renderer: %s", SDL_GetError());
 		return false;
 	}
+
+	LoadHighScore();
 
 	return true;
 }
@@ -214,6 +220,11 @@ void Game::UpdateGame()
 	// Did the ball go off the screen? (if so, end game)
 	else if (BallPos.x <= 0.0f)
 	{
+		int HScore = stoi(HighScore);
+		if (Score > HScore)
+		{
+			SaveHighScore();
+		}
 		IsRunning = false;
 	}
 	// Did the ball collide with the right wall?
@@ -281,10 +292,8 @@ void Game::GenerateOutput()
 	Orbitron = TTF_OpenFont("Assets\\Orbitron-Regular.ttf", FONT_SIZE);
 	string ScoreFixText = "SCORE: ";
 	string ScoreValue = to_string(Score);
-	string ScoreCompositText = ScoreFixText + ScoreValue;
+	ScoreCompositText = ScoreFixText + ScoreValue;
 	const char* str = ScoreCompositText.c_str();
-
-
 	ScoreSurface = TTF_RenderText_Solid(Orbitron, str, FontColor);
 	if(ScoreSurface == NULL)
 	{
@@ -296,11 +305,42 @@ void Game::GenerateOutput()
 		SDL_Log("Failed to create texture: %s", SDL_GetError());
 	}
 	SDL_RenderCopy(Renderer, ScoreTexture, NULL, &ScoreRect);
+
+	// Draw High Score
+	string Prefix = "HIGHSCORE: ";
+	string CompositeHighScore = Prefix + HighScore;
+	str = CompositeHighScore.c_str();
+	ScoreSurface = TTF_RenderText_Solid(Orbitron, str, FontColor);
+	if (ScoreSurface == NULL)
+	{
+		SDL_Log("Failed to create surface: %s", SDL_GetError());
+	}
+	ScoreTexture = SDL_CreateTextureFromSurface(Renderer, ScoreSurface);
+	if (ScoreTexture == NULL)
+	{
+		SDL_Log("Failed to create texture: %s", SDL_GetError());
+	}
+	SDL_RenderCopy(Renderer, ScoreTexture, NULL, &HighScoreRect);
+
 	SDL_DestroyTexture(ScoreTexture);
 	SDL_FreeSurface(ScoreSurface);
 
 	// Swap front buffer and back buffer
 	SDL_RenderPresent(Renderer);
+}
+
+void Game::SaveHighScore()
+{
+	ofstream ScoreToSave("Assets/Savefile.txt");
+	ScoreToSave << to_string(Score);
+	ScoreToSave.close();
+}
+
+void Game::LoadHighScore()
+{
+	ifstream ScoreToLoad("Assets/Savefile.txt");
+	getline(ScoreToLoad, HighScore);
+	ScoreToLoad.close();
 }
 
 void Game::Shutdown()
