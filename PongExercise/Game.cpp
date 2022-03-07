@@ -1,9 +1,12 @@
 #include "Game.h"
+#include <string>
+using namespace std;
 
 #define WIN_BACKGROUND_COLOR 0, 46, 120, 255
 #define WALL_COLOR 0, 11, 28, 250
 #define PADDLE_COLOR 250, 250, 250, 255
 #define FONT_COLOR 250, 250, 250, 255
+#define FONT_SIZE 100
 
 // Window size
 const int WinWidth = 1024;
@@ -33,7 +36,7 @@ TTF_Font* Orbitron;
 SDL_Color FontColor = { FONT_COLOR };
 SDL_Surface* ScoreSurface;
 SDL_Texture* ScoreTexture;
-SDL_Rect ScoreRect = { 500, 100, 200, 20 };
+SDL_Rect ScoreRect = {(WinWidth - 290), 20, 250, 50 };
 
 
 Game::Game() :	Window(nullptr), Renderer(nullptr),
@@ -275,10 +278,14 @@ void Game::GenerateOutput()
 	SDL_RenderFillRect(Renderer, &ball);
 
 	// Draw Score
-	Orbitron = TTF_OpenFont("Assets\\Orbitron-Regular.ttf", 40);
+	Orbitron = TTF_OpenFont("Assets\\Orbitron-Regular.ttf", FONT_SIZE);
+	string ScoreFixText = "SCORE: ";
+	string ScoreValue = to_string(Score);
+	string ScoreCompositText = ScoreFixText + ScoreValue;
+	const char* str = ScoreCompositText.c_str();
 
-	const char* text = "Test per lo score";
-	ScoreSurface = TTF_RenderText_Solid(Orbitron, text, FontColor);
+
+	ScoreSurface = TTF_RenderText_Solid(Orbitron, str, FontColor);
 	if(ScoreSurface == NULL)
 	{
 		SDL_Log("Failed to create surface: %s", SDL_GetError());
