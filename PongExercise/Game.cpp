@@ -29,7 +29,7 @@ int MousePosY;
 
 // Font Score
 int Score = 0;
-TTF_Font* Orbitron = TTF_OpenFont("Assets/Orbitron-Regular.ttf", 40);
+TTF_Font* Orbitron;
 SDL_Color FontColor = { FONT_COLOR };
 SDL_Surface* ScoreSurface;
 SDL_Texture* ScoreTexture;
@@ -45,12 +45,18 @@ Game::Game() :	Window(nullptr), Renderer(nullptr),
 bool Game::Initialize()
 {
 	// Init SDL
+	if (TTF_Init() == -1) {
+		SDL_Log("TTF_Init: %s\n", TTF_GetError());
+		return false;
+	}
+
 	int SdlInit = SDL_Init(SDL_INIT_VIDEO);
 	if (SdlInit != 0)
 	{
 		SDL_Log("Unable to init SDL: %s", SDL_GetError());
 		return false;
 	}
+
 
 	// Create game window
 	Window = SDL_CreateWindow("One Player Pong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WinWidth, WinHeight, 0);
@@ -269,7 +275,10 @@ void Game::GenerateOutput()
 	SDL_RenderFillRect(Renderer, &ball);
 
 	// Draw Score
-	ScoreSurface = TTF_RenderText_Solid(Orbitron, "Test per lo score", FontColor);
+	Orbitron = TTF_OpenFont("Assets\\Orbitron-Regular.ttf", 40);
+
+	const char* text = "Test per lo score";
+	ScoreSurface = TTF_RenderText_Solid(Orbitron, text, FontColor);
 	if(ScoreSurface == NULL)
 	{
 		SDL_Log("Failed to create surface: %s", SDL_GetError());
