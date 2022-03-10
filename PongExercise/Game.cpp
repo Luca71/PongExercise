@@ -216,8 +216,8 @@ void Game::UpdateGame()
 		BallVel.x *= -1.0f;
 	}
 
-	// Wall collisions
 	// Did the ball go off the screen? (if so, end game)
+	// Wall collisions
 	else if (BallPos.x <= 0.0f)
 	{
 		int HScore = stoi(HighScore);

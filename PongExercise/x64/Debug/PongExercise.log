@@ -1,3 +1,2 @@
-﻿  Game.cpp
-D:\CORSO AIV 2021-2022\C++ Project\PongExercise\PongExercise\Game.cpp(189,16): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+﻿  Main.cpp
   PongExercise.vcxproj -> D:\CORSO AIV 2021-2022\C++ Project\PongExercise\x64\Debug\PongExercise.exe
